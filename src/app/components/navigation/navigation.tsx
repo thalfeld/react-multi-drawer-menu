@@ -24,7 +24,7 @@ const RenderLinks: React.FC<IRenderLinks> = (props) => {
     const anyActive = !!activeLinksInList;
 
     return (
-        <div aria-controls={parent ? `submenu-${parent.id}` : undefined}>
+        <div aria-controls={parent ? `submenu-${parent.id}` : undefined} className="submenu">
             {parent && (
                 <button
                     onClick={() => {
@@ -40,6 +40,7 @@ const RenderLinks: React.FC<IRenderLinks> = (props) => {
 
             <ul className={`ul-level-${index}`}>
                 {links.map((l: ILink, i: number) => {
+                    const isCurrentlyActive = isActive(l.id);
                     return (
                         <li key={l.id}>
                             <a href={l.url} tabIndex={anyActive ? -1 : 0}>
@@ -48,14 +49,14 @@ const RenderLinks: React.FC<IRenderLinks> = (props) => {
                             {l.sublinks && (
                                 <button
                                     className={`${collapsed ? "collapseButton" : ""}`}
-                                    tabIndex={anyActive && !isActive(l.id) ? -1 : 0}
+                                    tabIndex={anyActive && !isCurrentlyActive ? -1 : 0}
                                     id={`submenu-${l.id}`}
                                     onClick={() => {
                                         toggleCallback(l, index);
                                     }}
                                 >
-                                    {collapsed && <span>-</span>}
-                                    {!collapsed && <span>+</span>}
+                                    {isCurrentlyActive && <span>-</span>}
+                                    {!isCurrentlyActive && <span>+</span>}
                                 </button>
                             )}
                         </li>
@@ -106,12 +107,10 @@ const Navigation: React.FC<INavigationProps> = (props) => {
         return [1, 2, 3, 4, 5, 6, 7, 8];
     }, []);
 
-    let xOffset = 0;
-
     return (
         <div ref={rootRef}>
             <nav role="navigation">
-                <div className="pane">
+                <div className="pane pane--first">
                     <RenderLinks
                         toggleCallback={toggleLink}
                         open
@@ -124,27 +123,14 @@ const Navigation: React.FC<INavigationProps> = (props) => {
                     const isOpen = !!activeLinks[idx];
                     const parent = activeLinks[idx]?.link || undefined;
                     const small = activeLinks.length > 1 && idx < activeLinks.length - 1;
+                    const classes = ["pane", "pane--level", `pane--level-${idx + 1}`];
+                    if (isOpen) classes.push("pane--open");
+                    if (small) classes.push("pane--collapsed");
+                    if (idx === activeLinks.length - 2) classes.push("pane--second-last");
+                    if (idx === activeLinks.length - 1) classes.push("pane--last");
 
-                    let width = 0;
-                    if (isOpen) {
-                        width = PANE_FULL_WIDTH;
-                    }
-                    if (small) {
-                        width = PANE_SMALL_WIDTH;
-                    }
-
-                    xOffset += width;
                     return (
-                        <div
-                            key={idx}
-                            className={`pane pane--level push-${idx + 1} ${isOpen ? " open" : ""} ${
-                                small ? "collapsed" : ""
-                            }`}
-                            style={{
-                                left: `${xOffset}px`,
-                                zIndex: placeholders.length - idx,
-                            }}
-                        >
+                        <div key={idx} className={classes.join(" ")}>
                             {isOpen && (
                                 <RenderLinks
                                     isActive={isActive}

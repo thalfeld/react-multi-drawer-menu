@@ -1,67 +1,86 @@
-$width: 300px;
+$maxPaneCountGenerated: 10; //for loop to make classes
+
+$firstPaneWidth: 100px;
+$paneWidth: 300px;
 $zTop: 900;
 $foldoutInTime: 0.2s;
 
-$paneHeaderHeight: 30px;
-ul {
-    padding: 0;
-    margin: 0;
-}
-li {
-    display: flex;
-    align-items: center;
-    justify-content: stretch;
-    height: 40px;
-    padding: 10px;
-    border-bottom: 1px solid blue;
-    a {
-        text-decoration: none;
-        flex-grow: 1;
-        color: #000;
-    }
-}
+$paneHeaderHeight: 50px;
+$paneCollapseWidth: 50px;
 
-.open {
-    background: #f2f2f2;
-}
-
+//all panes
 .pane {
     z-index: $zTop;
-    width: $width;
+    width: $paneWidth;
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     overflow: auto;
     background-color: grey;
+
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        height: 40px;
+        padding: 10px;
+        border-bottom: 1px solid blue;
+        a {
+            text-decoration: none;
+            flex-grow: 1;
+            color: #000;
+        }
+    }
 }
+.pane--first {
+    width: $firstPaneWidth;
+}
+
+//only level panes
+
 .pane--level {
+    left: $firstPaneWidth;
     visibility: hidden;
     transition: all 0.2s cubic-bezier(0.72, 0.18, 0.42, 0.9);
     transform: translateX(-100%);
-    opacity: 0;
-    &.open {
-        opacity: 1;
+
+    &.pane--open {
         visibility: visible;
         transform: translateX(0);
     }
 }
 
-.ul-level-0 {
-    visibility: visible;
-    opacity: 1;
-}
-
-// $count: 10;
-
-// @for $i from 1 through $count {
-//     .push-#{$i} {
-//         left: $width * $i;
-//         z-index: $zTop - $i;
-//     }
-// }
-.collapsed {
+.pane--collapsed {
     background-color: red;
+    width: $paneCollapseWidth;
+    overflow: hidden;
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 10px;
+        background: linear-gradient(to right, transparent, black);
+        opacity: 0.2;
+        z-index: 12;
+    }
+}
+@for $i from 0 through $maxPaneCountGenerated {
+    .pane--level-#{$i} {
+        z-index: $zTop - $i;
+    }
+    .pane--collapsed.pane--level-#{$i} {
+        left: $firstPaneWidth + (($i - 1) * $paneCollapseWidth);
+    }
+    .pane--level.pane--last:nth-child(#{$i + 2}) {
+        left: $firstPaneWidth + ($i * $paneCollapseWidth);
+    }
 }
 
 .collapseButton {
@@ -69,7 +88,7 @@ li {
     top: 0;
     right: 0;
     height: $paneHeaderHeight;
-    width: 30px;
+    width: $paneCollapseWidth;
     background-color: lime;
 }
 
@@ -82,7 +101,7 @@ li {
     height: $paneHeaderHeight;
     line-height: $paneHeaderHeight;
     padding: 0 1em;
-    background-color: #444;
+    background-color: inherit;
 }
 
 .pane_title--collapsed {
@@ -91,4 +110,9 @@ li {
     transform: rotate(-90deg);
     transform-origin: 100% 100%;
     width: 100vh;
+}
+
+// submenu compoennt
+.submenu {
+    background-color: inherit;
 }
