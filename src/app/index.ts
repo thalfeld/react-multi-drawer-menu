@@ -1,3 +1,5 @@
+import initReactApp from "./app";
+
 function InitApp() {
     const logMessage: string = "Up and running...";
     const message = document.createElement("p");
@@ -6,4 +8,6 @@ function InitApp() {
     console.log(logMessage);
 }
 
-InitApp();
+//InitApp();
+
+initReactApp();

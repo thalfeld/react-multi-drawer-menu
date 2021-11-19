@@ -1,0 +1,94 @@
+$width: 300px;
+$zTop: 900;
+$foldoutInTime: 0.2s;
+
+$paneHeaderHeight: 30px;
+ul {
+    padding: 0;
+    margin: 0;
+}
+li {
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    height: 40px;
+    padding: 10px;
+    border-bottom: 1px solid blue;
+    a {
+        text-decoration: none;
+        flex-grow: 1;
+        color: #000;
+    }
+}
+
+.open {
+    background: #f2f2f2;
+}
+
+.pane {
+    z-index: $zTop;
+    width: $width;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow: auto;
+    background-color: grey;
+}
+.pane--level {
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.72, 0.18, 0.42, 0.9);
+    transform: translateX(-100%);
+    opacity: 0;
+    &.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+    }
+}
+
+.ul-level-0 {
+    visibility: visible;
+    opacity: 1;
+}
+
+// $count: 10;
+
+// @for $i from 1 through $count {
+//     .push-#{$i} {
+//         left: $width * $i;
+//         z-index: $zTop - $i;
+//     }
+// }
+.collapsed {
+    background-color: red;
+}
+
+.collapseButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: $paneHeaderHeight;
+    width: 30px;
+    background-color: lime;
+}
+
+.pane_title {
+    border: none;
+    top: 0;
+    right: 0;
+    width: 100%;
+    position: sticky;
+    height: $paneHeaderHeight;
+    line-height: $paneHeaderHeight;
+    padding: 0 1em;
+    background-color: #444;
+}
+
+.pane_title--collapsed {
+    text-align: right;
+    position: absolute;
+    transform: rotate(-90deg);
+    transform-origin: 100% 100%;
+    width: 100vh;
+}
